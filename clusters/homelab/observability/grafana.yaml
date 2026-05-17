@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1h
-  path: ./apps/observability/grafana
+  path: ./apps/observability/grafana/overlays/homelab
   prune: true
   sourceRef:
     kind: GitRepository
