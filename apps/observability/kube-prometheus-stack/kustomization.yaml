@@ -7,7 +7,7 @@ generatorOptions:
 
 configMapGenerator:
   - name: kube-prometheus-stack-values
-    namespace: monitoring
+    namespace: flux-system
     files:
       - values.yaml
 
