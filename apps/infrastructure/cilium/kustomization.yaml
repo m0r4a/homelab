@@ -14,4 +14,3 @@ configMapGenerator:
     namespace: kube-system
     files:
       - values.yaml
-

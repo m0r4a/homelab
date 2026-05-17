@@ -1,1 +1,2 @@
-- cilium.yaml
+resources:
+  - cilium.yaml
