@@ -1,0 +1,197 @@
+grafana:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    # Im sacrificing HA for my current limited resources
+    # When having more than one replica each replica has it's own WAL
+    # scrape connections and TSDB, so it's double the capacity.
+    # When I eventually get more power I well add the two replicas
+    # and the Thanos Querier for the dedup
+    replicas: 1
+
+    externalLabels:
+      cluster: homelab
+      environment: dev
+
+    scrapeInterval: "30s"
+    evaluationInterval: "30s"
+
+    retention: 15d
+    retentionSize: "8GiB"
+
+    # Afaik it reduces the size of the WAL ~30%
+    walCompression: true
+
+    # The default values of these is "true", Prometheus only picks up
+    # ServiceMonitors that hav the chart's own release lables. So when applying Cilium
+    # serviceMonitors or whatever, Prometheus will ignore them. having these on false
+    # will match all the monitors cluster-wide.
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+
+    resources:
+      requests:
+        cpu: 150m
+        memory: 512Mi
+      limits:
+        cpu: 800m
+        memory: 1200Mi
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          # this means it stores the info into the local storage of the node. If the pods is rescheduled into
+          # a different node, the PCV wont follow it and the history will be lost.
+          # that's fine for me, but I will eventually add Longhorn for this.
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+alertmanager:
+  alertmanagerSpec:
+    # Alertmanager is lightweight enough so I can afford having two
+    replicas: 2
+    podAntiAffinity: "soft"
+
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
+
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname', 'cluster']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'null'  # TODO: change it when it has a real destination
+    receivers:
+      - name: 'null'
+
+
+prometheusOperator:
+  admissionWebhooks:
+    enabled: true
+    # Validates PrometheusRule/ServiceMonitor CRDs before they reach the cluster.
+    # Without this, a malformed PromQL rule just silently doesn't evaluate.
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# k3s runs the controller-manager and scheduler bound to 127.0.0.1 by default,
+# so the ServiceMonitor targets are unreachable from Prometheus pods on other nodes.
+# TODO: add to /etc/rancher/k3s/config.yaml on the control-plane:
+#   kube-controller-manager-arg: "bind-address=0.0.0.0"
+#   kube-scheduler-arg: "bind-address=0.0.0.0"
+# Then re-enable these and flip the rules below. Not critical for now.
+kubeControllerManager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+# Cilium is replacing kubeProxy so I don't need this
+kubeProxy:
+  enabled: false
+
+
+# k3s etcd listens on a unix socket, not a TCP port. Scraping it requires
+# mounting the socket + client certs into Prometheus. Doable, not worth it yet.
+kubeEtcd:
+  enabled: false
+
+kubeApiServer:
+  enabled: true
+
+kubelet:
+  enabled: true
+  serviceMonitor:
+    cAdvisor: true
+    # cAdvisor gives the container_cpu_usage_seconds_total, container_memory_working_set_bytes, etc.
+    # These back the "Kubernetes / Compute Resources" dashboards in Grafana. Don't disable.
+    probes: true
+    resource: true
+
+nodeExporter:
+  enabled: true
+
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+
+
+# kube-state-metrics watches the API server and exposes object-level metrics
+# kube_pod_status_phase, kube_deployment_spec_replicas, etc.
+kube-state-metrics:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
+    etcd: false
+    configReloaders: true
+    general: true
+    k8s: true
+    kubeApiserverAvailability: true
+    # Burn rate alerts are the most actionable API server alerts, they really like firing
+    # before availability actually drops, based on error budget consumption rate.
+    kubeApiserverBurnrate: true
+    kubeApiserverHistogram: true
+    kubeApiserverSlas: true
+    kubeControllerManager: false  # scraping disabled above
+    kubelet: true
+    kubeProxy: false              # doesn't exist in this cluster
+    kubePrometheusGeneral: true
+    kubePrometheusNodeRecording: true
+    kubernetesApps: true
+    kubernetesResources: true
+    # Includes KubeCPUOvercommit and KubeMemoryOvercommit, it fires when the total
+    # resource requests exceed node capacity. I have a small homelab so, it's important.
+    kubernetesStorage: true
+    kubernetesSystem: true
+    kubeSchedulerAlerting: false  # scraping disabled above
+    kubeSchedulerRecording: false
+    kubeStateMetrics: true
+    network: true
+    node: true
+    nodeExporterAlerting: true
+    nodeExporterRecording: true
+    prometheus: true
+    prometheusOperator: true
+    windows: false
