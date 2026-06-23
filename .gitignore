@@ -1,0 +1,46 @@
+# Terraform
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/crash.log
+**/crash.*.log
+**/*.tfvars
+**/*.tfvars.json
+**/override.tf
+**/override.tf.json
+**/*_override.tf
+**/*_override.tf.json
+
+# Ansible
+**/*.retry
+**/.ansible/
+infrastructure/ansible/roles
+infrastructure/ansible/inventory.ini
+**/.vault_pass
+**/.vault_pass.txt
+**/*.vault
+**/*.vault.yml
+**/*.vault.yaml
+
+# Kubernetes / GitOps
+kubeconfig
+kubeconfig.yaml
+kubeconfig.yml
+*.kubeconfig
+**/.kube/
+
+# SSH keys
+**/*.pem
+**/*.key
+**/id_rsa*
+**/id_ed25519*
+**/id_ecdsa*
+
+# Docker / Compose
+**/.env
+**/.env.*
+**/docker-compose.override.yml
+
+# Misc
+**/*.log
+**/.DS_Store
