@@ -36,3 +36,5 @@ bpf:
 kubeProxyReplacement: true
 k8sServiceHost: 10.0.0.10
 k8sServicePort: 6443
+
+tunnel: vxlan
