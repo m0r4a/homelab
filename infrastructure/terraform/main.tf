@@ -29,7 +29,7 @@ module "k3s_cluster" {
       vmid   = 201
       role   = "control-plane"
       ip     = "10.0.0.10"
-      memory = 4096
+      memory = 3072
       cores  = 2
     }
     worker1 = {
@@ -37,14 +37,14 @@ module "k3s_cluster" {
       role   = "worker"
       ip     = "10.0.0.11"
       memory = 4096
-      cores  = 2
+      cores  = 3
     }
     worker2 = {
       vmid   = 203
       role   = "worker"
       ip     = "10.0.0.12"
       memory = 4096
-      cores  = 2
+      cores  = 3
     }
     storage1 = {
       vmid            = 301

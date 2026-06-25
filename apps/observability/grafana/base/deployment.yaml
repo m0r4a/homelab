@@ -20,7 +20,7 @@ spec:
           - 0
       containers:
         - name: grafana
-          image: grafana/grafana:nightly
+          image: grafana/grafana:13.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
