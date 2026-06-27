@@ -18,8 +18,8 @@ prometheus:
     evaluationInterval: "30s"
 
     scrapeConfigNamespaceSelector:
-      matchNames:
-        - scrape-configs
+      matchLabels:
+        kubernetes.io/metadata.name: scrape-configs
     scrapeConfigSelector:
       matchLabels: {}
 
