@@ -10,5 +10,5 @@ spec:
     - labels:
         job: proxmox
       targets:
-        - http://192.168.1.2:9221/metrics
+        - 192.168.1.2:9221/metrics
 
