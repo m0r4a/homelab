@@ -1,3 +1,4 @@
 resources:
   - kube-prometheus-stack.yaml
   - grafana.yaml
+  - scrape-configs.yaml
