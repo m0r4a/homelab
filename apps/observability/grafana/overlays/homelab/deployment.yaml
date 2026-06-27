@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  template:
+    spec:
+      containers:
+        - name: grafana
+          volumeMounts:
+            - mountPath: /etc/grafana/provisioning/datasources
+              name: datasources-volume
+      volumes:
+        - name: datasources-volume
+          configMap:
+            name: grafana-datasources

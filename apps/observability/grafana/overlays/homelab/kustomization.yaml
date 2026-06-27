@@ -3,9 +3,11 @@ kind: Kustomization
 
 resources:
   - ../../base/
+  - ./datasources-configmap.yaml
 
 patches:
   - path: ./pvc.yaml
+  - path: ./deployment.yaml
 
 images:
   - name: grafana/grafana
