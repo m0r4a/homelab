@@ -6,8 +6,12 @@ metadata:
   labels:
     prometheus: system-monitoring-prometheus
 spec:
+  metricsPath: /pve
+  params:
+    module: [default]
+    target: ["192.168.1.2"]
   staticConfigs:
-    - labels:
-        job: proxmox
-      targets:
+    - targets:
         - 192.168.1.2:9221
+      labels:
+        job: proxmox
