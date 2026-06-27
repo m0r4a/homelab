@@ -17,6 +17,12 @@ prometheus:
     scrapeInterval: "30s"
     evaluationInterval: "30s"
 
+    scrapeConfigNamespaceSelector:
+      matchNames:
+        - scrape-configs
+    scrapeConfigSelector:
+      matchLabels: {}
+
     retention: 15d
     retentionSize: "8GiB"
 
