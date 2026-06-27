@@ -1,2 +1,3 @@
 resources:
   - monitoring.yaml
+  - scrape-configs.yaml
