@@ -1,0 +1,58 @@
+- name: Clean DNF cache before update
+  ansible.builtin.command: dnf clean all
+  changed_when: false
+  tags: [packages]
+
+- name: Update all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_cache: true
+  register: _dnf_update
+  tags: [packages]
+
+- name: Install required packages
+  ansible.builtin.dnf:
+    name: "{{ common_base_packages + common_extra_packages }}"
+    state: present
+  register: _dnf_install
+  tags: [packages]
+
+- name: Reboot if kernel or modules were updated
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+    post_reboot_delay: 20
+    msg: "Rebooting after package update"
+  when:
+    - (_dnf_update.changed or _dnf_install.changed)
+    - allow_reboot_on_update | bool
+  tags: [packages]
+
+- name: Ensure sudoers file for the admin user
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/{{ cluster_admin_user }}
+    content: "{{ cluster_admin_user }} ALL=(ALL) NOPASSWD: ALL\n"
+    mode: "0440"
+    validate: "visudo -cf %s"
+  tags: [security, sudo]
+
+- name: Remove wildcard cloud-init sudoers
+  ansible.builtin.file:
+    path: /etc/sudoers.d/90-cloud-init-users
+    state: absent
+  tags: [security, sudo]
+
+- name: Harden SSH daemon
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?{{ item.key }}"
+    line: "{{ item.key }} {{ item.value }}"
+    validate: "sshd -t -f %s"
+  loop:
+    - { key: "PermitRootLogin", value: "{{ ssh_permit_root_login }}" }
+    - { key: "PasswordAuthentication", value: "{{ ssh_password_authentication }}" }
+    - { key: "MaxAuthTries", value: "{{ ssh_max_auth_tries }}" }
+    - { key: "LoginGraceTime", value: "{{ ssh_login_grace_time }}" }
+  notify: restart sshd
+  when: ssh_hardening_enabled | bool
+  tags: [security, ssh]
