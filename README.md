@@ -10,3 +10,13 @@
 - kubectl / kubecolor
 - age (encryption)
 - sops (secrets management)
+
+# Non git-ops stuff
+
+1. Sops secret for flux
+
+```bash
+ kubectl create secret generic <sops_secret_name> \
+  --namespace=flux-system \
+  --from-file=age.agekey=<path>/age.agekey
+```
