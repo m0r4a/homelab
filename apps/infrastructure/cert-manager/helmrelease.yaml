@@ -16,3 +16,7 @@ spec:
   upgrade:
     crds: CreateReplace
   values: {}
+  valuesFrom:
+    - kind: ConfigMap
+      name: cert-manager-values
+      valuesKey: values.yaml

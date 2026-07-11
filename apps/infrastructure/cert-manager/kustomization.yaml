@@ -4,3 +4,13 @@ resources:
   - namespace.yaml
   - ocirepository.yaml
   - helmrelease.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: cert-manager-values
+    namespace: cert-manager
+    files:
+      - values.yaml
+
