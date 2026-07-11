@@ -1,0 +1,4 @@
+creation_rules:
+  - path_regex: secret.*\.yaml$
+    age: age16vxlnzz0r3zgdm9l6t2scs9wpfule9xhcepv7vf5rwvl39pfvqssre0pju
+    encrypted_regex: "(?i)(token|secret)"
