@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/cert-manager.io/clusterissuer_v1.json
 apiVersion: cert-manager.io/v1
-kind: Issuer
+kind: ClusterIssuer
 metadata:
-  name: letsencrypt-production
+  name: cloudflare-issuer
   namespace: cert-manager
 spec:
   acme:
