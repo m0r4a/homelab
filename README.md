@@ -1,6 +1,7 @@
 ## TODOs
 
 - [ ] Find a way to automatically add the yaml-language-server configs to all files or configure nvim to do so
+- [ ] Organize the namespaces, they should be app level, not cluster specific.
 
 ## CLI tools
 
