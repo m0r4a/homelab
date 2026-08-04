@@ -5,8 +5,6 @@ resources:
   - namespace.yaml
   - ocirepository.yaml
   - helmrelease.yaml
-  - cluster-issuer.yaml
-  - secret-cloudflare.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

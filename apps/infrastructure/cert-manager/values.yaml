@@ -5,4 +5,4 @@ prometheus:
   serviceMonitor:
     enabled: true
 webhook:
-  timeoutSeconds: 4
+  timeoutSeconds: 10
