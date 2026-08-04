@@ -2,7 +2,7 @@ crds:
   enabled: true
 prometheus:
   enabled: true
-  serviceMonitor:
+  servicemonitor:
     enabled: true
 webhook:
   timeoutSeconds: 10
