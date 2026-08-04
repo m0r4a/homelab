@@ -21,7 +21,7 @@ module "k3s_cluster" {
 
   ansible = {
     enabled = true
-    path    = "../ansible"
+    path    = "../../ansible"
   }
 
   nodes = {
@@ -45,14 +45,6 @@ module "k3s_cluster" {
       ip     = "10.0.0.12"
       memory = 4096
       cores  = 3
-    }
-    storage1 = {
-      vmid            = 301
-      role            = "storage"
-      ip              = "10.0.0.20"
-      memory          = 4096
-      cores           = 2
-      storage_disk_gb = 100
     }
   }
 }
