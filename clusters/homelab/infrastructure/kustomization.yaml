@@ -1,3 +1,4 @@
 resources:
   - cilium.yaml
   - cert-manager.yaml
+  - cert-manager-config.yaml
