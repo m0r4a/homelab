@@ -8,6 +8,7 @@ spec:
   interval: 1h
   path: ./apps/infrastructure/cert-manager
   prune: false
+  wait: true
   sourceRef:
     kind: GitRepository
     name: flux-system
